@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Slide (white with orange header band) -->
+    <path android:fillColor="#FFFFFF" android:pathData="M27,33h36v24h-36z" />
+    <path android:fillColor="#FF7043" android:pathData="M27,33h36v6h-36z" />
+    <path android:fillColor="#90A4AE" android:pathData="M31,43h18v2h-18z" />
+    <path android:fillColor="#90A4AE" android:pathData="M31,48h24v2h-24z" />
+
+    <!-- Gap outline so the PDF page stands out -->
+    <path android:fillColor="#1565C0" android:pathData="M51,53h31v34h-31z" />
+
+    <!-- PDF page (red) -->
+    <path android:fillColor="#E53935" android:pathData="M54,56h25v28h-25z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M58,63h17v2.5h-17z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M58,69h17v2.5h-17z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M58,75h10v2.5h-10z" />
+</vector>
