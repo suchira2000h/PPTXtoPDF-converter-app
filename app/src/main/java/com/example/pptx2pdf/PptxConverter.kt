@@ -368,7 +368,7 @@ class PptxConverter(private val files: Map<String, ByteArray>) {
 
         val prst = spPr?.at("prstGeom")?.getAttribute("prst") ?: ""
         val isLine = sp.localName == "cxnSp" || prst == "line" || prst.contains("Connector")
-        val style = sp.kid("style")
+        val spStyle = sp.kid("style")
 
         // Fill
         var fill: Int? = null
@@ -376,7 +376,7 @@ class PptxConverter(private val files: Map<String, ByteArray>) {
             fill = colorOf(spPr)
                 ?: spPr?.at("gradFill", "gsLst")?.kids("gs")?.firstOrNull()?.let { colorFrom(it) }
             if (fill == null && spPr?.kid("blipFill") == null) {
-                val fr = style?.kid("fillRef")
+                val fr = spStyle?.kid("fillRef")
                 if (fr != null && fr.getAttribute("idx") != "0") fill = colorFrom(fr)
             }
         }
@@ -387,7 +387,7 @@ class PptxConverter(private val files: Map<String, ByteArray>) {
         if (ln?.kid("noFill") == null) {
             lc = colorOf(ln)
             if (lc == null) {
-                val lr = style?.kid("lnRef")
+                val lr = spStyle?.kid("lnRef")
                 if (lr != null && lr.getAttribute("idx") != "0") lc = colorFrom(lr)
             }
         }
@@ -441,7 +441,7 @@ class PptxConverter(private val files: Map<String, ByteArray>) {
         val tx = sp.kid("txBody")
         if (tx != null && !isLine) {
             val phType = sp.at("nvSpPr", "nvPr", "ph")?.getAttribute("type")
-            val fontColor = style?.kid("fontRef")?.let { colorFrom(it) }
+            val fontColor = spStyle?.kid("fontRef")?.let { colorFrom(it) }
             drawText(c, tx, rect, listOf(sp) + ch, ctx, phType, fontColor)
         }
     }
