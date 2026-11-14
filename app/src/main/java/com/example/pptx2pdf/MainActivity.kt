@@ -67,6 +67,45 @@ class MainActivity : Activity() {
         root.addView(status)
         root.addView(openBtn)
         setContentView(root)
+        handleIncoming(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            setIntent(intent)
+            handleIncoming(intent)
+        }
+    }
+
+    /** Called when a .pptx is opened from Chrome downloads, a file manager, Gmail, WhatsApp, etc. */
+    private fun handleIncoming(i: Intent?) {
+        i ?: return
+        val uri: Uri? = when (i.action) {
+            Intent.ACTION_VIEW -> i.data
+            Intent.ACTION_SEND -> i.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri
+            else -> null
+        }
+        if (uri != null) {
+            i.action = null // don't handle the same intent twice (e.g. on rotation)
+            chooseOutput(uri)
+        }
+    }
+
+    private fun chooseOutput(uri: Uri) {
+        val name = displayName(uri)
+        if (name.lowercase().endsWith(".ppt")) {
+            Toast.makeText(this, "Old .ppt files aren't supported. Save as .pptx first.", Toast.LENGTH_LONG).show()
+            return
+        }
+        inputUri = uri
+        status.text = "Selected: $name"
+        val out = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_TITLE, name.substringBeforeLast('.') + ".pdf")
+        }
+        startActivityForResult(out, reqSave)
     }
 
     private fun pickFile() {
@@ -96,13 +135,7 @@ class MainActivity : Activity() {
                     Toast.makeText(this, "Please choose a .pptx file (not .ppt)", Toast.LENGTH_LONG).show()
                     return
                 }
-                inputUri = uri
-                val i = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "application/pdf"
-                    putExtra(Intent.EXTRA_TITLE, name.substringBeforeLast('.') + ".pdf")
-                }
-                startActivityForResult(i, reqSave)
+                chooseOutput(uri)
             }
             reqSave -> {
                 outputUri = uri
